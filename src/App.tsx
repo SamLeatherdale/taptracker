@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import { styled } from "baseui";
 import TransactionPage from "./TransactionPage";
-import colors from "material-colors";
 import {} from "baseui";
 import { HeadingSmall } from "baseui/typography";
 import { TransactionType } from "./types";

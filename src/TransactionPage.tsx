@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { styled } from "styletron-react";
-import colors from "material-colors";
 import Transaction from "./Transaction";
 import { TransactionType } from "./types";
 import { media } from "./theme";

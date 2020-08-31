@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { FormControl } from "baseui/form-control";
 import { Input } from "baseui/input";
 import {
@@ -6,9 +6,7 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
-  ModalButton,
-  SIZE,
-  ROLE
+  ModalButton
 } from "baseui/modal";
 import { KIND as ButtonKind } from "baseui/button";
 import { TransactionType } from "./types";

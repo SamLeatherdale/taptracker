@@ -1,5 +1,4 @@
 import React from "react";
-import colors from "material-colors";
 import chroma from "chroma-js";
 import { styled } from "baseui";
 import { Check } from "baseui/icon";
@@ -52,24 +51,27 @@ const Root = styled("li", {
 });
 const checkmarkSize = "80px";
 
-const CheckCircle = styled("div", ({ $theme, $isCompleted }) => ({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  width: checkmarkSize,
-  height: checkmarkSize,
-  flexShrink: 0,
-  borderRadius: "50%",
-  backgroundColor: $isCompleted
-    ? $theme.colors.positive
-    : $theme.colors.backgroundSecondary,
-  transition: `background-color ${transition.fast}`,
-  ":hover": {
+const CheckCircle = styled<{ $isCompleted: boolean }, "div">(
+  "div",
+  ({ $theme, $isCompleted }) => ({
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    width: checkmarkSize,
+    height: checkmarkSize,
+    flexShrink: 0,
+    borderRadius: "50%",
     backgroundColor: $isCompleted
-      ? chroma($theme.colors.positive).brighten(1).hex()
-      : $theme.colors.backgroundTertiary
-  }
-}));
+      ? $theme.colors.positive
+      : $theme.colors.backgroundSecondary,
+    transition: `background-color ${transition.fast}`,
+    ":hover": {
+      backgroundColor: $isCompleted
+        ? chroma($theme.colors.positive).brighten(1).hex()
+        : $theme.colors.backgroundTertiary
+    }
+  })
+);
 const Details = styled("div", {
   flex: "1 0 auto",
   marginLeft: "16px"
