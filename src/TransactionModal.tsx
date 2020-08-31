@@ -28,14 +28,17 @@ export default function TransactionModal({
   const transaction: TransactionType = {
     date: new Date(),
     index,
-    ...currentTransaction,
-    completed: true
+    completed: false,
+    ...currentTransaction
   };
-  const { name = "", amount = 0 } = transaction;
+  const { name = "", amount = 0, completed } = transaction;
 
   const doClose = () => onDone();
   const doSave = () => {
-    onDone(transaction);
+    onDone({
+      ...transaction,
+      completed: true
+    });
   };
   const doDelete = () => {
     onDone(transaction, true);
@@ -69,11 +72,13 @@ export default function TransactionModal({
         </FormControl>
       </ModalBody>
       <ModalFooter>
+        {completed && (
+          <ModalButton kind={ButtonKind.secondary} onClick={doDelete}>
+            Delete
+          </ModalButton>
+        )}
         <ModalButton kind={ButtonKind.tertiary} onClick={doClose}>
           Cancel
-        </ModalButton>
-        <ModalButton kind={ButtonKind.secondary} onClick={doDelete}>
-          Delete
         </ModalButton>
         <ModalButton onClick={doSave}>Save</ModalButton>
       </ModalFooter>
