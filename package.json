@@ -1,0 +1,41 @@
+{
+  "name": "transaction-todo",
+  "version": "1.0.0",
+  "description": "",
+  "keywords": [],
+  "main": "src/index.tsx",
+  "dependencies": {
+    "@types/chroma-js": "2.0.0",
+    "@types/lodash": "4.14.161",
+    "@types/styletron-engine-atomic": "1.1.0",
+    "@types/styletron-react": "5.0.2",
+    "@types/styletron-standard": "2.0.1",
+    "baseui": "9.97.0",
+    "chroma-js": "2.1.0",
+    "deepmerge": "4.2.2",
+    "lodash": "4.17.20",
+    "material-colors": "1.2.6",
+    "react": "^16.12.0",
+    "react-dom": "^16.12.0",
+    "react-scripts": "3.3.0",
+    "styletron-engine-atomic": "1.4.6",
+    "styletron-react": "5.2.7"
+  },
+  "devDependencies": {
+    "@types/react": "16.9.19",
+    "@types/react-dom": "16.9.5",
+    "typescript": "3.7.5"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test --env=jsdom",
+    "eject": "react-scripts eject"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
+}
