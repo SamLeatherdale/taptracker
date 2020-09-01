@@ -1,6 +1,6 @@
 export type TransactionType = {
   name?: string;
-  date?: Date;
+  date?: string;
   amount?: string;
   index: number;
   completed: boolean;
