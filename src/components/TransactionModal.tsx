@@ -1,17 +1,13 @@
-import React, { FormEvent } from "react";
+import {styled} from "baseui";
+import {KIND as ButtonKind} from "baseui/button";
+import {FormControl} from "baseui/form-control";
+import {Input} from "baseui/input";
+import {Modal, ModalBody, ModalButton, ModalFooter, ModalHeader} from "baseui/modal";
+import {Label2} from "baseui/typography/index";
 import moment from "moment";
-import { styled } from "baseui";
-import { FormControl } from "baseui/form-control";
-import { Input } from "baseui/input";
-import {
-  Modal,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  ModalButton
-} from "baseui/modal";
-import { KIND as ButtonKind } from "baseui/button";
-import { TransactionType } from "../types/types";
+import React, {FormEvent} from "react";
+import {contentPrimary} from "../theme";
+import {TransactionType} from "../types";
 
 type PropsType = {
   transaction?: TransactionType;
@@ -51,9 +47,12 @@ export default function TransactionModal({
   return (
     <Modal isOpen={isOpen} closeable onClose={doClose}>
       <form onSubmit={doSave}>
-        <ModalHeader>Transaction #{index + 1}</ModalHeader>
+        <ModalHeader>Transaction #{index + 1}
+          <Label2Styled>All fields are optional</Label2Styled>
+        </ModalHeader>
         <ModalBody>
           <FormRow>
+            <div>
             <FormControl label="name">
               <Input
                 value={name}
@@ -65,6 +64,8 @@ export default function TransactionModal({
                 }
               />
             </FormControl>
+            </div>
+            <div>
             <FormControl label="$">
               <Input
                 value={amount}
@@ -77,6 +78,7 @@ export default function TransactionModal({
                 }
               />
             </FormControl>
+            </div>
           </FormRow>
           <FormControl label="date">
             <Input
@@ -95,11 +97,11 @@ export default function TransactionModal({
         </ModalBody>
         <ModalFooter>
           {completed && (
-            <ModalButton kind={ButtonKind.secondary} onClick={doDelete}>
+            <ModalButton type="button" kind={ButtonKind.secondary} onClick={doDelete}>
               Delete
             </ModalButton>
           )}
-          <ModalButton kind={ButtonKind.tertiary} onClick={doClose}>
+          <ModalButton type="button" kind={ButtonKind.tertiary} onClick={doClose}>
             Cancel
           </ModalButton>
           <ModalButton type="submit">Save</ModalButton>
@@ -112,6 +114,8 @@ TransactionModal.defaultProps = {
   transaction: {}
 };
 const FormRow = styled("div", {
-  //display: "flex",
-  //alignItems: "center"
+  display: "grid",
+  gridTemplateColumns: "repeat(2, 1fr)",
+  gap: "16px"
 });
+const Label2Styled = styled(Label2, contentPrimary)

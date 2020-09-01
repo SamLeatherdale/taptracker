@@ -1,15 +1,21 @@
+import {HeadingSmall} from "baseui/typography/index";
+import {Moment} from "moment";
 import React, { useState } from "react";
-import { styled } from "styletron-react";
+import { styled } from "baseui";
 import Transaction from "./Transaction";
-import { TransactionType } from "../types/types";
-import { media } from "../theme";
+import { TransactionType } from "../types";
+import {contentPrimary, media} from "../theme";
 import TransactionModal from "./TransactionModal";
 
 type PropsType = {
   items: TransactionType[];
   updateItems: (t: TransactionType[]) => unknown;
+  startDate: Moment;
 };
-export default function TransactionPage({ items, updateItems }: PropsType) {
+
+const tapSound = new Audio(`${process.env.PUBLIC_URL}/pay-sound.mp3`);
+
+export default function TransactionPage({ items, updateItems, startDate }: PropsType) {
   const [editItem, updateEditItem] = useState(-1);
   const [isEditing, updateIsEditing] = useState(false);
   const [editTransaction, updateEditTransaction] = useState<TransactionType>();
@@ -30,9 +36,14 @@ export default function TransactionPage({ items, updateItems }: PropsType) {
     const newItems = [...items];
     newItems[t.index] = remove ? { index: t.index, completed: false } : t;
     updateItems(newItems);
+
+    if (!remove) {
+      paySoundVibrate();
+    }
   };
   return (
     <Root>
+      <StyledHeadingSmall>Transactions since {startDate.format("MMMM")}</StyledHeadingSmall>
       <List>
         {items.map((transaction, i) => (
           <Transaction
@@ -52,6 +63,18 @@ export default function TransactionPage({ items, updateItems }: PropsType) {
     </Root>
   );
 }
+
+function paySoundVibrate() {
+  tapSound.play();
+  window.navigator.vibrate(300);
+}
+
+const StyledHeadingSmall = styled(HeadingSmall, ({ $theme }) => {
+  return {
+    ...contentPrimary({ $theme }),
+    textAlign: "center"
+  }
+})
 const Root = styled("div", {
   width: "100%"
 });

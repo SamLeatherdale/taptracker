@@ -1,21 +1,23 @@
-import React, { Component } from "react";
-import { styled } from "baseui";
-import TransactionPage from "./TransactionPage";
-import {} from "baseui";
-import { HeadingSmall } from "baseui/typography";
-import { TransactionType } from "../types/types";
+import {styled} from "baseui";
+import {HeadingSmall} from "baseui/typography";
+import moment from "moment";
+import React, {Component} from "react";
 import "../styles.css";
+import {TransactionType} from "../types";
+import TransactionPage from "./TransactionPage";
 
 const KEY_TRANSACTIONS = "taptrack.transactions";
 type PropsType = {};
 type StateType = {
   items: TransactionType[];
+  themeLight: boolean;
 };
 export default class App extends Component<PropsType, StateType> {
   constructor(props: PropsType) {
     super(props);
     this.state = {
-      items: this.getItems()
+      items: this.getItems(),
+      themeLight: true,
     };
     this.updateItems = this.updateItems.bind(this);
   }
@@ -41,25 +43,30 @@ export default class App extends Component<PropsType, StateType> {
     });
   }
   render() {
+    const { themeLight } = this.state;
     return (
       <Page>
         <header>
-          <HeadingSmall>Tap Tracker</HeadingSmall>
+          <HeadingSmall $style={{ margin: '8px' }}>Tap Tracker</HeadingSmall>
         </header>
         <TransactionPage
           items={this.state.items}
           updateItems={this.updateItems}
+          startDate={(moment().set({ date: 1}))}
         />
         <footer />
       </Page>
     );
   }
 }
-const Page = styled("main", ({ $theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  alignItems: "center",
-  justifyContent: "space-between",
-  height: "100%",
-  backgroundColor: $theme.colors.backgroundPrimary
-}));
+const Page = styled("main", ({ $theme }) => {
+  return {
+    display: "flex",
+        flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "space-between",
+      minHeight: "100%",
+      padding: "24px 12px",
+      backgroundColor: $theme.colors.backgroundPrimary
+  }
+});

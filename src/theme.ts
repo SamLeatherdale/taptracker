@@ -22,3 +22,7 @@ export const media = {
 export const transition = {
   fast: "0.4s"
 };
+
+export const contentPrimary = ({ $theme }: { $theme?: any }) => ({
+  color: `${$theme.colors.contentPrimary} !important`
+});
