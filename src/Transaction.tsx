@@ -1,8 +1,9 @@
 import React from "react";
 import chroma from "chroma-js";
+import moment from "moment";
 import { styled } from "baseui";
 import { Check } from "baseui/icon";
-import { Label1, Label2, LabelLarge } from "baseui/typography";
+import { Label1, Label2, Label3, LabelLarge } from "baseui/typography";
 import { Card, StyledBody } from "baseui/card";
 import { TransactionType } from "./types";
 import { transition } from "./theme";
@@ -12,7 +13,7 @@ type PropsType = {
   onClick: () => void;
 };
 export default function Transaction({ onClick, transaction }: PropsType) {
-  const { completed, name, amount, index } = transaction;
+  const { completed, date, name, amount, index } = transaction;
   const hasDetails = !!(name || amount);
 
   return (
@@ -21,30 +22,35 @@ export default function Transaction({ onClick, transaction }: PropsType) {
         {!completed && <LabelLarge>{index + 1}</LabelLarge>}
         {completed && <Check size={checkmarkSize} color="contentPrimary" />}
       </CheckCircle>
-      <Details>
-        {hasDetails && (
-          <Card
-            overrides={{
-              Root: {
-                style: {
-                  height: "100%"
-                }
+      <Details $isVisible={hasDetails}>
+        <Card
+          overrides={{
+            Root: {
+              style: {
+                height: "100%"
               }
-            }}
-          >
-            <StyledBody>
+            }
+          }}
+        >
+          <StyledBody>
+            <TransactionGrid>
               <Label1>{name}</Label1>
-              {amount && (
-                <Label2 color="contentSecondary">
-                  ${parseFloat(amount).toFixed(2)}
-                </Label2>
-              )}
-            </StyledBody>
-          </Card>
-        )}
+              <Label3 $style={{ textAlign: "right" }} color="contentTertiary">
+                {date && formatDate(date)}
+              </Label3>
+              <Label2 color="contentSecondary">
+                {amount && `$${parseFloat(amount).toFixed(2)}`}
+              </Label2>
+            </TransactionGrid>
+          </StyledBody>
+        </Card>
       </Details>
     </Root>
   );
+}
+
+function formatDate(date: string) {
+  return moment(date).format("DD/MM");
 }
 const Root = styled("li", {
   display: "flex"
@@ -72,7 +78,17 @@ const CheckCircle = styled<{ $isCompleted: boolean }, "div">(
     }
   })
 );
-const Details = styled("div", {
-  flex: "1 0 auto",
-  marginLeft: "16px"
+const Details = styled<{ $isVisible: boolean }, "div">(
+  "div",
+  ({ $isVisible }) => ({
+    display: $isVisible ? "block" : "none",
+    flex: "1 0 auto",
+    marginLeft: "16px"
+  })
+);
+const TransactionGrid = styled("div", {
+  display: "grid",
+  gridTemplateColumns: "repeat(2, 1fr)",
+  alignItems: "center",
+  justifyContent: "space-between"
 });
