@@ -43,7 +43,6 @@ export default class App extends Component<PropsType, StateType> {
     });
   }
   render() {
-    const { themeLight } = this.state;
     return (
       <Page>
         <header>

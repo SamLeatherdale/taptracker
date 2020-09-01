@@ -1,10 +1,10 @@
-import {HeadingMedium, HeadingSmall} from "baseui/typography/index";
+import {HeadingMedium} from "baseui/typography/index";
 import React from "react";
 import { useSpring, animated } from "react-spring/web";
 import moment from "moment";
 import { styled } from "baseui";
 import { Check } from "baseui/icon";
-import { Label1, Label2, Label3, LabelLarge } from "baseui/typography";
+import { Label1, Label2, LabelLarge } from "baseui/typography";
 import { TransactionType } from "../types";
 import { transition } from "../theme";
 
