@@ -11,7 +11,7 @@ import {
   ModalButton
 } from "baseui/modal";
 import { KIND as ButtonKind } from "baseui/button";
-import { TransactionType } from "./types";
+import { TransactionType } from "../types/types";
 
 type PropsType = {
   transaction?: TransactionType;

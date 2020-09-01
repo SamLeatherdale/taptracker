@@ -5,8 +5,8 @@ import { styled } from "baseui";
 import { Check } from "baseui/icon";
 import { Label1, Label2, Label3, LabelLarge } from "baseui/typography";
 import { Card, StyledBody } from "baseui/card";
-import { TransactionType } from "./types";
-import { transition } from "./theme";
+import { TransactionType } from "../types/types";
+import { transition } from "../theme";
 
 type PropsType = {
   transaction: TransactionType;

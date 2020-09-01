@@ -3,8 +3,8 @@ import { styled } from "baseui";
 import TransactionPage from "./TransactionPage";
 import {} from "baseui";
 import { HeadingSmall } from "baseui/typography";
-import { TransactionType } from "./types";
-import "./styles.css";
+import { TransactionType } from "../types/types";
+import "../styles.css";
 
 const KEY_TRANSACTIONS = "taptrack.transactions";
 type PropsType = {};
