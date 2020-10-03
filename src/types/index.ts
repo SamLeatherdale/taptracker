@@ -1,7 +1,12 @@
 export type TransactionType = {
-  name?: string;
-  date?: string;
-  amount?: string;
-  index: number;
-  completed: boolean;
+	id: string;
+	date: string;
+	completed: boolean;
+	name?: string;
+	amount?: string;
+};
+export type TransactionList = Record<string, TransactionType>;
+export type SettingsType = {
+	rolloverDay: number;
+	transactionCount: number;
 };
