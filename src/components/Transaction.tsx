@@ -9,17 +9,22 @@ import { TransactionType } from "../types";
 import { transition } from "../theme";
 
 type PropsType = {
-  transaction: TransactionType;
+  transaction?: TransactionType;
   onClick: () => void;
+  index: number;
 };
-export default function Transaction({ onClick, transaction }: PropsType) {
-    const { completed, date, name, amount, index } = transaction;
+export default function Transaction({ onClick, transaction, index }: PropsType) {
+    const {
+        completed = false,
+        date,
+        name,
+        amount,
+    } = transaction || {};
     const props = useSpring({
         width: completed ? checkmarkSize : '0px',
         height: completed ? checkmarkSize : '0px',
         transform: completed ?  'rotate(0deg)' : 'rotate(180deg)',
     });
-  const hasDetails = !!(name || amount);
     const check = (
         <CheckCircle $isCompleted={completed} $isAnimating={true}>
         {!completed && <LabelLarge>{index + 1}</LabelLarge>}
@@ -35,17 +40,24 @@ export default function Transaction({ onClick, transaction }: PropsType) {
       useCheck = check;
   }
 
+  let title = '';
+  if (name) {
+      title = name;
+  } else if (completed) {
+      title = `Transaction #${index + 1}`;
+  }
+
   return (
     <Root onClick={onClick}>
-        <CheckWrap>
-            {useCheck}
-        </CheckWrap>
-      <Details $isVisible={hasDetails}>
+      <Details>
+          <CheckWrap>
+              {useCheck}
+          </CheckWrap>
             <TransactionGrid>
-                <HeadingMedium $style={{ margin: 0, gridRow: "1 / span 2" }} color="contentTertiary">
-                    {date && formatDate(date)}
-                </HeadingMedium>
-              <Label1 $style={{ textAlign: "right"}}>{name}</Label1>
+            <Label1 $style={{ gridColumn: "1 / span 2"}}>{title}</Label1>
+            <Label2 color="contentSecondary">
+                {date && formatDate(date)}
+            </Label2>
               <Label2 $style={{ textAlign: "right"}} color="contentSecondary">
                 {amount && `$${parseFloat(amount).toFixed(2)}`}
               </Label2>
@@ -61,14 +73,16 @@ function formatDate(date: string) {
 const Root = styled("li", {
   display: "flex"
 });
-const checkmarkSize = "80px";
+const checkmarkSize = "60px";
 
 const CheckWrap = styled("div", {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
     width: checkmarkSize,
-    height: checkmarkSize
+    height: checkmarkSize,
+    marginRight: "16px",
+    flexShrink: 0
 })
 const CheckCircle = styled<{ $isCompleted: boolean; $isAnimating: boolean }, "div">(
   "div",
@@ -79,24 +93,14 @@ const CheckCircle = styled<{ $isCompleted: boolean; $isAnimating: boolean }, "di
     width: $isAnimating ? '100%' : '80px',
     height: $isAnimating ? '100%' : '80px',
     flexShrink: 0,
+    border: !$isCompleted
+      ? `1px solid ${$theme.colors.contentPrimary}`
+      : '',
     borderRadius: "50%",
     backgroundColor: $isCompleted
       ? $theme.colors.accent
       : $theme.colors.backgroundSecondary,
     transition: `background-color ${transition.fast}`,
-      // animationDuration: "2s",
-      // animationName: $isAnimating ? ({
-      //     from: {
-      //         width: 0,
-      //         height: 0
-      //     },
-      //     to: {
-      //         width: checkmarkSize,
-      //         height: checkmarkSize,
-      //     },
-      // } as unknown as string) : undefined, // csstype is incorrect here
-      // animationFillMode: "both",
-      // animationPlayState: $isAnimating ? 'running' : 'paused',
       animationIterationCount: 'infinite',
     ":hover": {
       backgroundColor: $isCompleted
@@ -105,14 +109,12 @@ const CheckCircle = styled<{ $isCompleted: boolean; $isAnimating: boolean }, "di
     }
   })
 );
-const Details = styled<{ $isVisible: boolean }, "div">(
+const Details = styled(
   "div",
-  ({ $isVisible, $theme }) => ({
-    // display: $isVisible ? "block" : "none",
+  ({ $theme }) => ({
       display: "flex",
       alignItems: "stretch",
     flex: "1 0 auto",
-    marginLeft: "16px",
       backgroundColor: $theme.colors.backgroundSecondary,
       padding: "16px",
       borderRadius: "8px",

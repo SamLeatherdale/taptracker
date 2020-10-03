@@ -1,62 +1,70 @@
+import autoBind from "auto-bind";
 import {styled} from "baseui";
 import {HeadingSmall} from "baseui/typography";
+import { Menu as IconMenu } from 'baseui/icon';
 import moment from "moment";
-import React, {Component} from "react";
+import React, {Component, useState} from "react";
+import { pickBy } from "lodash";
 import "../styles.css";
-import {TransactionType} from "../types";
+import {getSavedSettings, getSavedTransactions, storeSettings, storeTransactions} from "../helpers/storage";
+import {SettingsType, TransactionList, TransactionType} from "../types";
+import SettingsModal from "./SettingsModal";
 import TransactionPage from "./TransactionPage";
 
-const KEY_TRANSACTIONS = "taptrack.transactions";
+
 type PropsType = {};
 type StateType = {
-  items: TransactionType[];
+  items: TransactionList;
+  settings: SettingsType;
   themeLight: boolean;
 };
-export default class App extends Component<PropsType, StateType> {
-  constructor(props: PropsType) {
-    super(props);
-    this.state = {
-      items: this.getItems(),
-      themeLight: true,
-    };
-    this.updateItems = this.updateItems.bind(this);
+export default function App() {
+  const [items, setItems] = useState(getSavedTransactions());
+  const [settings, setSettings] = useState(getSavedSettings());
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const startDate = moment().set({ date: settings.rolloverDay });
+  const now = moment();
+  if (startDate.isAfter(now)) {
+    startDate.subtract(1, "month");
   }
-  getItems(): TransactionType[] {
-    const savedItems: TransactionType[] = JSON.parse(
-      localStorage.getItem(KEY_TRANSACTIONS) || "[]"
-    );
-    const items: TransactionType[] = Array(5)
-      .fill(0)
-      .map((o, i) => ({
-        index: i,
-        completed: false
-      }));
 
-    savedItems.forEach((item) => {
-      items[item.index] = item;
-    });
-    return items;
+  const updateItems = (items: TransactionList) => {
+    setItems(items);
+    storeTransactions(items);
+  };
+  const updateSettings = (settings: SettingsType) => {
+    setSettings(settings);
+    storeSettings(settings);
+    closeSettings();
   }
-  updateItems(items: TransactionType[]) {
-    this.setState({ items }, () => {
-      localStorage.setItem(KEY_TRANSACTIONS, JSON.stringify(items));
-    });
-  }
-  render() {
-    return (
-      <Page>
-        <header>
-          <HeadingSmall $style={{ margin: '8px' }}>Tap Tracker</HeadingSmall>
-        </header>
-        <TransactionPage
-          items={this.state.items}
-          updateItems={this.updateItems}
-          startDate={(moment().set({ date: 1}))}
-        />
-        <footer />
-      </Page>
-    );
-  }
+  const closeSettings = () => setSettingsOpen(false);
+
+  const pageItems = pickBy(items, (val) => moment(val.date).isSameOrAfter(startDate, "day"));
+
+  return (
+    <Page>
+      <Header>
+        <MenuWrap onClick={() => setSettingsOpen(true)}>
+          <IconMenu color="contentPrimary" size={32} />
+        </MenuWrap>
+        <HeadingSmall $style={{ margin: '8px', textAlign: 'center' }}>Tap Tracker</HeadingSmall>
+      </Header>
+      <SettingsModal
+          settings={settings}
+          isOpen={settingsOpen}
+          onSave={updateSettings}
+          onCancel={closeSettings}
+          onClearTransactions={() => updateItems({})}
+      />
+      <TransactionPage
+          numItems={settings.transactionCount}
+        items={pageItems}
+        updateItems={updateItems}
+        startDate={moment(startDate)}
+      />
+      <footer />
+    </Page>
+  );
 }
 const Page = styled("main", ({ $theme }) => {
   return {
@@ -65,7 +73,14 @@ const Page = styled("main", ({ $theme }) => {
       alignItems: "center",
       justifyContent: "space-between",
       minHeight: "100%",
-      padding: "24px 12px",
+      padding: "12px 12px",
       backgroundColor: $theme.colors.backgroundPrimary
   }
 });
+const Header = styled("header", {
+  width: '100%',
+  justifyContent: 'center'
+})
+const MenuWrap = styled("div", {
+  float: 'right'
+})

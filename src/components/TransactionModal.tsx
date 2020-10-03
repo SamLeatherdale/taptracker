@@ -6,29 +6,33 @@ import {Modal, ModalBody, ModalButton, ModalFooter, ModalHeader} from "baseui/mo
 import {Label2} from "baseui/typography/index";
 import moment from "moment";
 import React, {FormEvent} from "react";
+import {v4 as uuid} from "uuid";
+import {formatDateBrowser} from "../helpers";
 import {contentPrimary} from "../theme";
 import {TransactionType} from "../types";
 
 type PropsType = {
-  transaction?: TransactionType;
+  startDate: moment.Moment;
+  transaction?: Partial<TransactionType>;
   isOpen: boolean;
   index: number;
   onUpdate: (transaction: TransactionType) => void;
   onDone: (transaction?: TransactionType, remove?: boolean) => void;
 };
 export default function TransactionModal({
-  transaction: currentTransaction,
+    startDate,
+  transaction: currentTransaction = {},
   isOpen,
   onDone,
   onUpdate,
   index
 }: PropsType) {
   const transaction: TransactionType = {
-    date: new Date().toISOString(),
-    index,
+    id: uuid(),
+    date: (new Date()).toISOString(),
     completed: false,
     ...currentTransaction
-  };
+  } ;
   const { name = "", amount = "", date, completed } = transaction;
 
   const doClose = () => onDone();
@@ -44,6 +48,7 @@ export default function TransactionModal({
   const doDelete = () => {
     onDone(transaction, true);
   };
+  // @ts-ignore
   return (
     <Modal isOpen={isOpen} closeable onClose={doClose}>
       <form onSubmit={doSave}>
@@ -81,8 +86,9 @@ export default function TransactionModal({
             </div>
           </FormRow>
           <FormControl label="date">
+            {/* @ts-ignore   Uber has wrong definition here*/}
             <Input
-              value={moment(date).format("YYYY-MM-DD")}
+              value={formatDateBrowser(moment(date))}
               type="date"
               onChange={(e) =>
                 onUpdate({
@@ -92,6 +98,9 @@ export default function TransactionModal({
                   ).toISOString()
                 })
               }
+              // @ts-ignore   Uber has wrong definition here
+              min={formatDateBrowser(startDate)}
+              max={formatDateBrowser(moment(startDate).add(1, 'month').subtract(1, 'day'))}
             />
           </FormControl>
         </ModalBody>
@@ -110,9 +119,6 @@ export default function TransactionModal({
     </Modal>
   );
 }
-TransactionModal.defaultProps = {
-  transaction: {}
-};
 const FormRow = styled("div", {
   display: "grid",
   gridTemplateColumns: "repeat(2, 1fr)",

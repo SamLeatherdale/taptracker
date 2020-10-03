@@ -2,58 +2,81 @@ import {HeadingSmall} from "baseui/typography/index";
 import {Moment} from "moment";
 import React, { useState } from "react";
 import { styled } from "baseui";
+import moment from "moment";
+import { pickBy } from "lodash";
+import {genericCompare} from "../helpers";
+import TimeLeft from "./TimeLeft";
 import Transaction from "./Transaction";
-import { TransactionType } from "../types";
+import {TransactionList, TransactionType} from "../types";
 import {contentPrimary, media} from "../theme";
 import TransactionModal from "./TransactionModal";
 
 type PropsType = {
-  items: TransactionType[];
-  updateItems: (t: TransactionType[]) => unknown;
+  numItems: number;
+  items: TransactionList;
+  updateItems: (t: TransactionList) => unknown;
   startDate: Moment;
 };
 
 const tapSound = new Audio(`${process.env.PUBLIC_URL}/pay-sound.mp3`);
 
-export default function TransactionPage({ items, updateItems, startDate }: PropsType) {
+export default function TransactionPage({ numItems, items, updateItems, startDate }: PropsType) {
   const [editItem, updateEditItem] = useState(-1);
   const [isEditing, updateIsEditing] = useState(false);
   const [editTransaction, updateEditTransaction] = useState<TransactionType>();
+  const itemList = Array.from(Object.values(items));
 
   const onClickItem = (i: number) => {
+    const item = renderItems[i] || undefined;
     updateIsEditing(true);
-    updateEditItem(i);
-    updateEditTransaction(items[i]);
+    updateEditItem(itemList.length);
+    updateEditTransaction(item);
   };
-  const onUpdate = (t: TransactionType) => {
-    updateEditTransaction(t);
+  const onUpdate = (txn: TransactionType) => {
+    updateEditTransaction(txn);
   };
-  const onSave = (t?: TransactionType, remove: boolean = false) => {
+  const onSave = (txn?: TransactionType, remove: boolean = false) => {
     updateIsEditing(false);
-    if (!t) {
+    if (!txn) {
       return;
     }
-    const newItems = [...items];
-    newItems[t.index] = remove ? { index: t.index, completed: false } : t;
+
+    let newItems: TransactionList;
+    if (remove) {
+      newItems = pickBy(items, t => txn.id !== t.id)
+    } else {
+      newItems = {
+        ...items,
+        [txn.id]: txn
+      }
+    }
     updateItems(newItems);
 
     if (!remove) {
       paySoundVibrate();
     }
   };
+  const renderItems: Array<TransactionType | undefined> = [];
+  const sortedItems = [...itemList].sort((a, b) => genericCompare(a.date, b.date));
+  for (let i = 0; i < numItems; i++) {
+    renderItems[i] = sortedItems[i] || undefined;
+  }
+
   return (
     <Root>
-      <StyledHeadingSmall>Transactions since {startDate.format("MMMM")}</StyledHeadingSmall>
+      <TimeLeft finishDate={moment(startDate).add(1, 'month')} isCompleted={itemList.length === numItems} />
       <List>
-        {items.map((transaction, i) => (
+        {renderItems.map((transaction, i) => (
           <Transaction
             key={i}
+            index={i}
             transaction={transaction}
             onClick={() => onClickItem(i)}
           />
         ))}
       </List>
       <TransactionModal
+          startDate={startDate}
         transaction={editTransaction}
         isOpen={isEditing}
         onDone={onSave}
