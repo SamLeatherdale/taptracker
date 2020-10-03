@@ -5,6 +5,7 @@ import { Provider as StyletronProvider, DebugEngine } from 'styletron-react';
 import { Client as Styletron } from 'styletron-engine-monolithic';
 import { DarkTheme, BaseProvider } from 'baseui';
 import App from './components/App';
+import { register as registerServiceWorker } from './serviceWorker';
 
 const engine = new Styletron();
 const rootElement = document.getElementById('root');
@@ -18,3 +19,5 @@ render(
 	</StyletronProvider>,
 	rootElement
 );
+
+registerServiceWorker();
