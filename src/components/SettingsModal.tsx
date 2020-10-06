@@ -42,7 +42,7 @@ export default function SettingsModal({
 	};
 
 	return (
-		<Modal isOpen={isOpen} closeable onClose={doClose}>
+		<Modal isOpen={isOpen} closeable onClose={doClose} autoFocus={false}>
 			<form onSubmit={doSave}>
 				<ModalHeader>Settings</ModalHeader>
 				<ModalBody>

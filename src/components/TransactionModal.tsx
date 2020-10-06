@@ -50,7 +50,7 @@ export default function TransactionModal({
 	};
 	// @ts-ignore
 	return (
-		<Modal isOpen={isOpen} closeable onClose={doClose}>
+		<Modal isOpen={isOpen} closeable onClose={doClose} autoFocus={false}>
 			<form onSubmit={doSave}>
 				<ModalHeader>
 					Transaction #{index + 1}
